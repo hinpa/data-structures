@@ -32,10 +32,12 @@
 // A linked list is a list that associates every element with a link to the next element
 // For simplicity, let's imagine that we want to store integers:
 
+/*
 struct Node {
 	int value; 
 	Node* next;
 };
+*/
 
 // Big O:
 // Access is O(n)
@@ -72,8 +74,68 @@ struct Node {
 // 
 // 6. Linked list is harder to implement.  
 //
+// Now let's implement Linked list:
+// Our linked list will look like
+//
+// Name    first_elem   second_elem  past_the_end
+// [link]->[data|link]->[data|link]->NULL
+//
+// Name is of class type.
+// Name is a name of our forward-linked list.
+// We'll make linked list of integers
+// 
+//
+
+
+struct Node {
+	int data;
+	Node* next;
+};
+
+
+class linked_list {
+	Node* head = NULL;
+	size_t sz = 0;
+public:
+	size_t size(void) { return sz; }
+	void print(void);
+	void insert(int);
+};
+
+// Let's define some functions working with linked list: print() and insert()
+// insert(int) inserts data in the beginning
+// print(void) prints the whole list
+
+void linked_list::insert(int toPrint) {
+	Node *temp = new Node();
+	temp->data = toPrint;
+	temp->next = NULL;
+	if (head != NULL)
+		temp->next = head;
+	head = temp;
+
+}
+void linked_list::print(void) {
+	Node *temp = head;
+	size_t i = 0;
+	std::cout << "LINKED_LIST DATA:" << std::endl;
+	while (temp != NULL) {
+		std::cout << i << "th element: " << temp->data << std::endl;
+		++i;
+		temp = temp->next;
+	}
+	if (i == 0) {
+		std::cout << "is empty" << std::endl;
+	}
+}
+
+
 int main() {
 	int arr[10] = {}; // static list
-	int* arr = new int[10]; // a dynamic list
-
+	int* arrDyn = new int[10]; // a dynamic list
+	linked_list LL;
+	for (int i = 0; i != 10; ++i) {
+		LL.insert(i);
+	}
+	LL.print();
 }
