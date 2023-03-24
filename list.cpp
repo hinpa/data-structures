@@ -100,27 +100,153 @@ public:
 	size_t size(void) { return sz; }
 	void print(void);
 	void insert(int);
+	void push_front(int val) { insert(val); }
+	void insert(int,size_t);
+	void push_back(int val) { insert(val, sz); };
+	void remove(size_t);
+	void pop_front(void) { remove(0); }
+	void pop_back(void) { remove(sz - 1); }
+	int get(size_t); // gets data member
+	void reverse_rec(void); // recursive reverse
+	void reverse_it(void); // iterative reverse
+	void rprint(void); // check reverse print before writing recursive reverse
+	void rec_print(void); // before writing recursive reverse, check recursive print
 };
 
-// Let's define some functions working with linked list: print() and insert()
-// insert(int) inserts data in the beginning
-// print(void) prints the whole list
 
-void linked_list::insert(int toPrint) {
-	Node *temp = new Node();
-	temp->data = toPrint;
-	temp->next = NULL;
-	if (head != NULL)
-		temp->next = head;
-	head = temp;
-
+int linked_list::get(size_t pos) {
+	Node* temp = head;
+	for (int i = 0; i != pos; ++i) {
+		temp = temp->next;
+	}
+	return temp->data;
 }
+
+void linked_list::reverse_rec() {
+	if (head == NULL) 
+		return;
+	static Node *next = head; // a static pointer throughout calls
+	Node *curr = next; // local to the call
+	if (next->next == NULL) { head = next; return;}
+	next = next->next; // we move to the next node
+	reverse_rec(); // and call function
+	// we'll have adjacent next and curr
+	// curr will have next as its next element
+	// first we save pointer to 
+	curr->next = next->next;
+	next->next = curr;
+	next = curr;
+}
+
+void linked_list::reverse_it() {
+	// works even for empty and 1-element forward linked list
+	Node *curr = head, *prev = NULL, *next;
+	while (curr != NULL) {
+		next = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = next;
+	}
+	head = prev;
+}
+
+void linked_list::remove(size_t pos) {
+	if (pos >= sz || pos < 0 ) { 
+		return; 
+	}
+
+	Node *traverse = head; 
+
+	if (pos == 0) { 
+		head = head->next;
+		delete traverse;
+		--sz;
+		return;
+	}
+
+	for (int i = 0; i < pos - 1; ++i) {
+		traverse = traverse->next;
+	}
+	
+	Node *toDelete = traverse->next;
+	traverse->next = toDelete->next;
+	delete toDelete;
+	--sz;
+	
+}
+
+
+
+void linked_list::insert(int toInsert) { // O(1);
+	Node *temp = new Node(); // create new node with data passed
+	temp->data = toInsert;
+	temp->next = NULL;
+	if (head != NULL) // if linked list is not empty, we point to the first element
+		temp->next = head;
+	head = temp; // then update the first element
+ 	++sz;	
+}
+
+void linked_list::insert(int valPush, size_t pos) { // O(n)
+	if (pos > sz || pos < 0) {// not in range? bad 
+		std::cerr << "Inserting in invalid position";
+		return;
+	}
+	else if (pos == 0) {
+		insert(valPush);
+		return;
+	}
+
+	Node *toPush = new Node(); // create new node with value to push
+	toPush->data = valPush;
+	
+	Node *temp = head;
+	for (int i = 0; i != pos-1; ++i) {
+		temp = temp->next;
+	}
+
+	toPush->next = temp->next; // link to the next data block
+	temp->next = toPush; // link to our pushed node
+	++sz; // add to size
+}
+
+void linked_list::rec_print() {
+	int toPrint;
+	static Node *curr = head;
+	if (curr == NULL) {
+		curr = head;
+		return;
+	}
+	toPrint = curr->data;
+	curr = curr->next;
+	std::cout << toPrint;
+	rec_print();
+}
+
+void linked_list::rprint() {
+	int toPrint;
+	static Node *curr = head;
+	static int cntcall = 0;
+	int currcall = cntcall;
+	++cntcall;
+	if (curr == NULL) {
+		curr = head;
+		cntcall = 0;
+		printf("LINKED_LIST(size=%zu,rprint() method):\n", sz);
+		return;
+	}
+	toPrint = curr->data;
+	curr = curr->next;
+	rprint();
+	printf("%d element: %d\n",currcall,toPrint);
+}
+
 void linked_list::print(void) {
 	Node *temp = head;
 	size_t i = 0;
-	std::cout << "LINKED_LIST DATA:" << std::endl;
+	std::cout << "LINKED_LIST DATA(size=" << this->sz << ", iterative print):" << std::endl;
 	while (temp != NULL) {
-		std::cout << i << "th element: " << temp->data << std::endl;
+		std::cout << i << " element: " << temp->data << std::endl;
 		++i;
 		temp = temp->next;
 	}
@@ -134,8 +260,15 @@ int main() {
 	int arr[10] = {}; // static list
 	int* arrDyn = new int[10]; // a dynamic list
 	linked_list LL;
+	LL.print();
+	LL.rprint();
+	LL.rec_print();
+	LL.reverse_it();
+	LL.reverse_rec();
 	for (int i = 0; i != 10; ++i) {
-		LL.insert(i);
+		LL.push_back(i);
 	}
+	LL.print();
+	LL.reverse_rec();
 	LL.print();
 }
