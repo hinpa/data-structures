@@ -1,10 +1,9 @@
 // list implementation
 #include <iostream>
 
-
 // A static list is a data structure that satisfies these points:
 // 1. Store given amount of elements of given data type
-// 2. Write/Modify element at given position
+// 2. Read/Write element at given position
 // 3. Read element at given position
 // An implementation of static list is an array
 
@@ -13,9 +12,9 @@
 // 2. Can insert
 // 3. Can remove
 // 4. Count
-// 5. W/M element access
+// 5. R/W element access
 // 6. Stores particular data type.
-// A typical dynamic array or vector is an example of a list
+// A typical dynamic array or vector is an example of a dynamic list
 // However, arrays and vectors have problems with memory inefficiency.
 // You have to always allocate memory with some capacity
 // What if we've never get to use all the capacity? 
@@ -24,7 +23,7 @@
 // Let's go through array implementation list big O notation:
 // Insert is O(n) (including pushing back)
 // Removal is O(n)
-// W/m access is O(1)
+// R/W access is O(1)
 //
 
 
@@ -106,7 +105,7 @@ public:
 	void remove(size_t);
 	void pop_front(void) { remove(0); }
 	void pop_back(void) { remove(sz - 1); }
-	int get(size_t); // gets data member
+	int& get(size_t); // gets data member
 	void reverse_rec(void); // recursive reverse
 	void reverse_it(void); // iterative reverse
 	void rprint(void); // check reverse print before writing recursive reverse
@@ -114,7 +113,7 @@ public:
 };
 
 
-int linked_list::get(size_t pos) {
+int& linked_list::get(size_t pos) {
 	Node* temp = head;
 	for (int i = 0; i != pos; ++i) {
 		temp = temp->next;
